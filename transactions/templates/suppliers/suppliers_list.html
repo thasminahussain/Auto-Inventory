@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}Suppliers List{% endblock title%}
+
+{% block content %}
+    
+    <div class="row" style="color: #9290C3; font-style: bold; font-size: 3rem;">
+        <div class="col-md-8">Suppliers List</div>
+        <div class="col-md-4">               
+            <div style="float:right;"> <a class="btn ghost-blue" href="{% url 'new-supplier' %}">Add New Supplier</a> </div>
+        </div>
+    </div>
+
+    <br>
+
+    <table class="table table-css">
+        
+        <thead class="thead-inverse align-middle">
+            <tr>
+                <th width="20%">Name</th>
+                <th width="20%">Company Name</th>
+                <th width="15%">Phone No</th>
+                <th width="20%">Supplier ID</th>
+                <th width="15%">Website</th>
+                <th width="10%">Actions</th>
+            </tr>
+        </thead>
+
+        {% if object_list %}
+        <tbody>
+            {% for supplier in object_list %}
+            <tr>
+                <td>
+                    <h4> <a href="{% url 'supplier' supplier.pk %}">{{ supplier.name }}</a> </h4>
+                </td>
+                <td class="align-middle"> {{ supplier.company_name }} </td>
+                <td class="align-middle"> {{ supplier.phone }} </td>
+                <td class="align-middle"> {{ supplier.supplierID }} </td>
+                <td class="align-middle">
+                    {% if supplier.website %}
+                        <a href="{{ supplier.website }}" target="_blank">{{ supplier.website }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td class="align-middle">
+                    <div class="align-middle">
+                        <a href="{% url 'edit-supplier' supplier.pk %}" class="btn ghost-button">Edit Details</a>
+                        <a href="{% url 'delete-supplier' supplier.pk %}" class="btn ghost-red">Delete Supplier</a>
+                    </div>
+                </td>              
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% else %}
+        <tbody>
+            <tr>
+                <td colspan="6" style="text-align: center; color: #9290C3; font-style: bold; font-size: 1.5rem;">No Records Found</td>
+            </tr>
+        </tbody>
+        {% endif %}
+    </table>
+
+    <div class="align-middle">
+        {% if is_paginated %}
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+{% endblock content %}
