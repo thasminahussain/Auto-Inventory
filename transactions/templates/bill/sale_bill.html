@@ -1,0 +1,147 @@
+{% extends bill_base %}
+{% load static %}
+
+{% block title %} Receipt No: {{ bill.billno }}{% endblock title %}
+
+{% block content %}
+    
+    <div class="text-center text-primary font-weight-bold" style="font-size: 2rem; border-bottom: 1px solid #fff;">
+        Receipt No: {{ bill.billno }}
+    </div>
+
+    <br><br>
+
+    <form method="post">
+    {% csrf_token %}
+
+        <div class="bg">
+
+            <br><br>
+
+            <div id="printArea" class="bg" style="background-color: #fff;">
+
+                <table class="table table-bordered">
+                    <tbody>
+                    
+                        <tr>
+                            <td class="text-center font-weight-bold">Sales Receipt</td>
+                        </tr>
+                    
+                        <tr class="text-center">
+                            <td>
+                                <span style="font-size: 1.5rem;">{{ company_name }}</span> <br>
+                                <span class="font-weight-bold">Address:</span> 456 Maple Street, Metropolis, XY 12345 <br>
+                                <span class="font-weight-bold">Email:</span> {{ company_email }} <br>
+                                <span class="font-weight-bold">SalesPerson:</span> {{ bill.salesperson}} <br><br>
+                            </td>
+                        </tr>
+                    
+                        <tr>
+                            <td>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-weight-bold">Customer Name</td>
+                                            <td class="font-weight-bold">Invoice No</td>
+                                            <td>{{ bill.billno }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ bill.name }}</td>
+                                            <td class="font-weight-bold">Date</td>
+                                            <td>{{ bill.time.date }}</td>
+                                        </tr>      
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr class="text-center font-weight-bold">
+                                            <td>Item No</td>
+                                            <td>Description</td>
+                                            <td>Qty</td>
+                                            <td>Rate</td>
+                                            <td>Amount</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in items %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ item.stock.name }}</td>
+                                                <td>{{ item.quantity }}</td>
+                                                <td>${{ item.perprice }}</td>
+                                                <td>${{ item.totalprice }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-weight-bold">Payment Method</td>
+                                            <td>{{ payment_method }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="font-weight-bold">Subtotal</td>
+                                            <td>${{ subtotal }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Sales Tax</td>
+                                            <td>${{ salestax }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Total</td>
+                                            <td>${{ total }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <p class="text-center" style="color: black;">
+                    <br>
+                    Thank you for shopping with us!
+                    <br>
+                    <br>
+                </p>
+
+            </div>
+
+            <br><br>
+
+        </div>
+
+        <br><br>
+
+        <div class="wrapper" style="text-align: center;">
+            <button class="center ghost-blue" onclick="printpage('printArea')">Print</button>
+            <a href="{% url 'sales-list' %}" class="btn center ghost-button">Go Back</a>
+        </div>
+    
+    
+    </form>
+    
+    <script>
+        function printpage(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }       
+    </script>
+
+{% endblock %}
